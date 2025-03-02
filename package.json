@@ -16,7 +16,7 @@
   ],
   "author": "Maximilian Schwarzmüller",
   "license": "ISC",
-  "devDependencies": {
-    "http-server": "^0.9.0"
+  "dependencies": {
+    "http-server": "^14.1.1"
   }
 }

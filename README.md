@@ -5,9 +5,12 @@ https://www.udemy.com/course/progressive-web-app-pwa-the-complete-guide/
 
 In this project, it lies in the public/src folder, but bear in mind that when publishing the project, the manifest.json's location is supposed to be the root of your web site.
 
-## Reference
+## References
 
 https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Manifest
+
+https://web.dev/articles/add-manifest
+https://web.dev/articles/customize-install
 
 ## Notes
 

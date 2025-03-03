@@ -1,13 +1,19 @@
+var deferredPrompt;
+
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js').then((it) => {
-    console.log('service work has been registered');
-  });
+  navigator.serviceWorker
+    .register('/sw.js')
+    .then(function () {
+      console.log('Service worker registered!');
+    })
+    .catch(function (err) {
+      console.log(err);
+    });
 }
 
-var deferredPromptEvent;
-window.addEventListener('beforeinstallprompt', (event) => {
+window.addEventListener('beforeinstallprompt', function (event) {
   console.log('beforeinstallprompt fired');
   event.preventDefault();
-  deferredPromptEvent = event;
+  deferredPrompt = event;
   return false;
 });

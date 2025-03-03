@@ -23,3 +23,7 @@ In the course, he mentions we need to import the manifest in all our html files.
 ## Relevant properties
 
 name (splash screen), short_name, start_url, scope, display (usually standalone), background_color (splash screen), theme color (top bar), description (bookmarks), lang, orientation, icons (array), related_applications (if you have a native app) 
+
+## Remote Debugging
+
+https://developer.chrome.com/docs/devtools/remote-debugging?hl=en

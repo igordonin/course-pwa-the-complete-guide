@@ -36,3 +36,10 @@ This is actually not Service Worker specific, it applies to all Web Workers.
 ## What's the difference between Web Workers and Service Workers?
 
 Service Workers are a special type of Web Workers. Web Workers also run on a background thread, decoupled from the DOM. They don't keep on living after the page is closed though. The Service Worker on the other hand, keeps on running (depending on the operating system) and also is decoupled from an individual page. 
+
+# Useful Resources & Links
+
+- Are Service Workers Ready? - Check Browser Support: https://jakearchibald.github.io/isserviceworkerready/
+- Setting up Remote Debugging on Chrome: https://developers.google.com/web/tools/chrome-devtools/remote-debugging/
+- Getting that "Web App Install Banner": https://developers.google.com/web/fundamentals/engage-and-retain/app-install-banners/
+- Getting Started with Service Workers (don't read too far, there's stuff in there we'll learn later ;-)): https://developers.google.com/web/fundamentals/getting-started/primers/service-workers

@@ -27,3 +27,5 @@ name (splash screen), short_name, start_url, scope, display (usually standalone)
 ## Remote Debugging
 
 https://developer.chrome.com/docs/devtools/remote-debugging?hl=en
+
+chrome://inspect/#devices

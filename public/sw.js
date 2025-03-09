@@ -5,7 +5,8 @@ self.addEventListener('install', function (event) {
   // finish to avoid other events from trying to access the cache when
   // it's not ready yet.
   event.waitUntil(
-    // this name is arbitrary
+    // remember that caches is a global overall caches storage
+    // the cache name here (static) is arbitrary. could name it anything
     caches.open('static').then(
       // we receive a reference to the cache
       function (cache) {
@@ -14,6 +15,9 @@ self.addEventListener('install', function (event) {
       }
     )
   );
+
+  // Just for reference: when you open a cache, you get a CacheStorage
+  // const cacheStorage = await caches.open(cacheName);
 });
 
 self.addEventListener('activate', function (event) {
@@ -22,5 +26,18 @@ self.addEventListener('activate', function (event) {
 });
 
 self.addEventListener('fetch', function (event) {
-  event.respondWith(fetch(event.request));
+  event.respondWith(
+    // Remember that the request is the key for the map!
+    caches
+      .match(event.request)
+      // this is always executed. if not found, response will be null
+      // meaning that not found will not throw an error
+      .then((response) => {
+        if (response) {
+          return response;
+        }
+
+        return fetch(event.request);
+      })
+  );
 });

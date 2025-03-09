@@ -11,6 +11,11 @@ self.addEventListener('install', function (event) {
       // we receive a reference to the cache
       function (cache) {
         console.log('[Service Worker] Precaching App Shell...', event);
+        // caching only /index.html won't work.
+        // the request must match exactly.
+        // Important: what we're caching here are URLs, not paths, not strings!
+        cache.add('/');
+        cache.add('/index.html');
         cache.add('/src/js/app.js');
       }
     )

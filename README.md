@@ -36,6 +36,8 @@ chrome://inspect/#devices
 
 Reference: https://developer.mozilla.org/en-US/docs/Web/API/Cache
 
+# Useful Links
+
 About Cache Persistence and Storage Limitations: https://jakearchibald.com/2014/offline-cookbook/#cache-persistence
 
 Learn more about Service Workers: https://developer.mozilla.org/en/docs/Web/API/Service_Worker_API

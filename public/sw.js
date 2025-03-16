@@ -1,4 +1,4 @@
-var CACHE_STATIC = 'static-v5';
+var CACHE_STATIC = 'static-v9';
 var CACHE_DYNAMIC = 'dynamic';
 
 self.addEventListener('install', function (event) {
@@ -22,6 +22,7 @@ self.addEventListener('install', function (event) {
         cache.addAll([
           '/',
           '/index.html',
+          '/offline.html',
           '/src/js/app.js',
           '/src/js/feed.js',
           '/src/js/material.min.js',
@@ -85,7 +86,15 @@ self.addEventListener('fetch', function (event) {
               });
             })
             // ignore fetch errors
-            .catch(function (err) {})
+            .catch(function (err) {
+              return caches.open(CACHE_STATIC).then(function (cache) {
+                // there's a side effect here, bc this is a naive approach
+                // for every fetch request that fails, we're returning this
+                // html page.
+                // we can and will fine tune this later
+                return cache.match('/offline.html');
+              });
+            })
         );
       })
   );

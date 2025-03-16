@@ -1,3 +1,6 @@
+var CACHE_STATIC = 'static-v1';
+var CACHE_DYNAMIC = 'dynamic';
+
 self.addEventListener('install', function (event) {
   console.log('[Service Worker] Installing Service Worker ...', event);
 
@@ -7,7 +10,9 @@ self.addEventListener('install', function (event) {
   event.waitUntil(
     // remember that caches is a global overall caches storage
     // the cache name here (static) is arbitrary. could name it anything
-    caches.open('static').then(
+    // we've now added a version to the cache name itself
+    // (and that's called - believe it or not - a caching strategy)
+    caches.open(CACHE_STATIC).then(
       // we receive a reference to the cache
       function (cache) {
         console.log('[Service Worker] Precaching App Shell...', event);
@@ -39,6 +44,19 @@ self.addEventListener('install', function (event) {
 
 self.addEventListener('activate', function (event) {
   console.log('[Service Worker] Activating Service Worker ....', event);
+  // This is a good place to clean up stale caches
+  event.waitUntil(
+    caches.keys().then(function (cachesKeys) {
+      return Promise.all(
+        cachesKeys.map(function (cacheKey) {
+          if (cacheKey !== CACHE_STATIC && cacheKey !== CACHE_DYNAMIC) {
+            console.log('[Service Worker] Removing old caches ....', cacheKey);
+            return caches.delete(cacheKey);
+          }
+        })
+      );
+    })
+  );
   return self.clients.claim();
 });
 
@@ -58,7 +76,7 @@ self.addEventListener('fetch', function (event) {
           fetch(event.request)
             // this is where we will work Dynamic Caching
             .then(function (fetchResponse) {
-              return caches.open('dynamic').then(function (cache) {
+              return caches.open(CACHE_DYNAMIC).then(function (cache) {
                 // - the difference between .add and .put is that the later
                 // requires you to provide the key as well
                 // - also notice that we need to clone the response,
@@ -67,6 +85,8 @@ self.addEventListener('fetch', function (event) {
                 return fetchResponse;
               });
             })
+            // ignore fetch errors
+            .catch(function (err) {})
         );
       })
   );

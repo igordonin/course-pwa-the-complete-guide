@@ -34,6 +34,12 @@ shareImageButton.addEventListener('click', openCreatePostModal);
 
 closeCreatePostModalButton.addEventListener('click', closeCreatePostModal);
 
+function clearCards() {
+  while (sharedMomentsArea.hasChildNodes()) {
+    sharedMomentsArea.removeChild(sharedMomentsArea.lastChild);
+  }
+}
+
 function createCard() {
   var cardWrapper = document.createElement('div');
   cardWrapper.className = 'shared-moment-card mdl-card mdl-shadow--2dp';
@@ -70,10 +76,37 @@ function createCard() {
   sharedMomentsArea.appendChild(cardWrapper);
 }
 
+// This is a strategy to prevent Network data (preferred) from
+// being overriden by Cache data, as they're in race condition
+// with this implementation
+var networkReceived = false;
+
+// Cache then Network Strategy
+// Makes parallel calls to both the caches and the Network
 fetch(API_URL)
   .then(function (res) {
     return res.json();
   })
   .then(function (data) {
+    console.log('From Web', data);
+    networkReceived = true;
+    clearCards();
     createCard();
   });
+
+if ('caches' in window) {
+  caches
+    .match(API_URL)
+    .then(function (response) {
+      if (response) {
+        return response.json();
+      }
+    })
+    .then(function (data) {
+      console.log('From Cache', data);
+      if (!networkReceived) {
+        clearCards();
+        createCard();
+      }
+    });
+}

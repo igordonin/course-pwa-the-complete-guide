@@ -49,12 +49,25 @@ self.addEventListener('fetch', function (event) {
       .match(event.request)
       // this is always executed. if not found, response will be null
       // meaning that not found will not throw an error
-      .then((response) => {
-        if (response) {
-          return response;
+      .then((cacheResponse) => {
+        if (cacheResponse) {
+          return cacheResponse;
         }
 
-        return fetch(event.request);
+        return (
+          fetch(event.request)
+            // this is where we will work Dynamic Caching
+            .then(function (fetchResponse) {
+              return caches.open('dynamic').then(function (cache) {
+                // - the difference between .add and .put is that the later
+                // requires you to provide the key as well
+                // - also notice that we need to clone the response,
+                // otherwise it will have been consumed
+                cache.put(event.request.url, fetchResponse.clone());
+                return fetchResponse;
+              });
+            })
+        );
       })
   );
 });

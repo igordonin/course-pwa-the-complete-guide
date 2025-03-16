@@ -81,9 +81,6 @@ self.addEventListener('fetch', function (event) {
                 // requires you to provide the key as well
                 // - also notice that we need to clone the response,
                 // otherwise it will have been consumed
-
-                // temporary disable dynamic cache for this section
-                // cache.put(event.request.url, fetchResponse.clone());
                 return fetchResponse;
               });
             })

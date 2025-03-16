@@ -1,3 +1,5 @@
+var API_URL = 'https://httpbin.org/get';
+
 var shareImageButton = document.querySelector('#share-image-button');
 var createPostArea = document.querySelector('#create-post');
 var closeCreatePostModalButton = document.querySelector(
@@ -49,16 +51,26 @@ function createCard() {
   cardSupportingText.className = 'mdl-card__supporting-text';
   cardSupportingText.textContent = 'In San Francisco';
   cardSupportingText.style.textAlign = 'center';
+  // this is a feature that would allow the user to save content
+  // for access while in offline mode on demand: cache on demand
   var cardSavedButton = document.createElement('button');
   cardSavedButton.textContent = 'Save';
-  cardSavedButton.addEventListener('click', () => console.log('save clicked'));
+  cardSavedButton.addEventListener('click', async (event) => {
+    console.log('clicked');
+    // check if we have caches available
+    if ('caches' in window) {
+      const cache = await caches.open('ui');
+      cache.add(API_URL);
+      cache.add('/src/images/sf-boat.jpg');
+    }
+  });
   cardSupportingText.appendChild(cardSavedButton);
   cardWrapper.appendChild(cardSupportingText);
   componentHandler.upgradeElement(cardWrapper);
   sharedMomentsArea.appendChild(cardWrapper);
 }
 
-fetch('https://httpbin.org/get')
+fetch(API_URL)
   .then(function (res) {
     return res.json();
   })

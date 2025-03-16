@@ -14,9 +14,21 @@ self.addEventListener('install', function (event) {
         // caching only /index.html won't work.
         // the request must match exactly.
         // Important: what we're caching here are URLs, not paths, not strings!
-        cache.add('/');
-        cache.add('/index.html');
-        cache.add('/src/js/app.js');
+        cache.addAll([
+          '/',
+          '/index.html',
+          '/src/js/app.js',
+          '/src/js/feed.js',
+          '/src/js/material.min.js',
+          '/src/css/app.css',
+          '/src/css/feed.css',
+          '/src/images/main-image.jpg',
+          // course instructor decided not to cache the icons as this is
+          // not supposed to be the default state of the app
+          'https://fonts.googleapis.com/css?family=Roboto:400,700',
+          'https://fonts.googleapis.com/icon?family=Material+Icons',
+          'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css',
+        ]);
       }
     )
   );

@@ -1,16 +1,9 @@
 importScripts('/src/js/idb.js');
+importScripts('/src/js/indexed_db.utils.js');
 
-var CACHE_STATIC = 'static-v5';
+var CACHE_STATIC = 'static-v6';
 var CACHE_DYNAMIC = 'dynamic';
 var API_URL = 'https://pwa-course-90792-default-rtdb.firebaseio.com/posts.json';
-
-var dbPromise = idb.open('posts-store', 1, function (instance) {
-  if (!instance.objectStoreNames.contains('posts')) {
-    instance.createObjectStore('posts', { keyPath: 'id' });
-  }
-});
-
-console.log('birl', dbPromise);
 
 function trimCache(name, maxItems) {
   caches.open(name).then(function (cache) {
@@ -99,12 +92,7 @@ self.addEventListener('fetch', function (event) {
         const clonedResponse = response.clone();
         clonedResponse.json().then(function (data) {
           Object.values(data).forEach((card) => {
-            dbPromise.then(function (db) {
-              var tx = db.transaction('posts', 'readwrite');
-              var store = tx.objectStore('posts');
-              store.put(card);
-              return tx.complete;
-            });
+            writeData('posts', card);
           });
         });
 

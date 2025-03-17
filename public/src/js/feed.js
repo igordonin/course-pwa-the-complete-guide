@@ -100,19 +100,12 @@ fetch(API_URL)
     updateUi(Object.values(data));
   });
 
-if ('caches' in window) {
-  caches
-    .match(API_URL)
-    .then(function (response) {
-      if (response) {
-        return response.json();
-      }
-    })
-    .then(function (data) {
+if ('indexedDb' in window) {
+  readAllData('posts').then(function (data) {
+    if (!networkReceived) {
       console.log('From Cache', data);
-      if (!networkReceived) {
-        clearCards();
-        updateUi(Object.values(data));
-      }
-    });
+      clearCards();
+      updateUi(data);
+    }
+  });
 }

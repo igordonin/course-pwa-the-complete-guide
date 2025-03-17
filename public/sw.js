@@ -2,6 +2,19 @@ var CACHE_STATIC = 'static-v15';
 var CACHE_DYNAMIC = 'dynamic';
 var API_URL = 'https://httpbin.org/get';
 
+function trimCache(name, maxItems) {
+  caches.open(name).then(function (cache) {
+    return cache.keys().then(function (keys) {
+      if (keys.length > maxItems) {
+        cache.delete(keys[0]).then(
+          // recursevely call itself until the if condition above is met
+          trimCache(name, maxItems)
+        );
+      }
+    });
+  });
+}
+
 self.addEventListener('install', function (event) {
   console.log('[Service Worker] Installing Service Worker ...', event);
 
@@ -73,6 +86,8 @@ self.addEventListener('fetch', function (event) {
     event.respondWith(
       caches.open(CACHE_DYNAMIC).then(function (cache) {
         return fetch(event.request).then(function (response) {
+          // 3 might be a bit aggressive. you could have more items
+          trimCache(CACHE_DYNAMIC, 3);
           cache.put(event.request, response.clone());
           return response;
         });
@@ -96,6 +111,7 @@ self.addEventListener('fetch', function (event) {
               // this is where we will work Dynamic Caching
               .then(function (fetchResponse) {
                 return caches.open(CACHE_DYNAMIC).then(function (cache) {
+                  trimCache(CACHE_DYNAMIC, 3);
                   // - the difference between .add and .put is that the later
                   // requires you to provide the key as well
                   // - also notice that we need to clone the response,

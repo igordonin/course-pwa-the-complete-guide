@@ -87,7 +87,8 @@ self.addEventListener('fetch', function (event) {
       caches.open(CACHE_DYNAMIC).then(function (cache) {
         return fetch(event.request).then(function (response) {
           // 3 might be a bit aggressive. you could have more items
-          trimCache(CACHE_DYNAMIC, 3);
+          // commenting it out for the course
+          // trimCache(CACHE_DYNAMIC, 3);
           cache.put(event.request, response.clone());
           return response;
         });
@@ -111,7 +112,8 @@ self.addEventListener('fetch', function (event) {
               // this is where we will work Dynamic Caching
               .then(function (fetchResponse) {
                 return caches.open(CACHE_DYNAMIC).then(function (cache) {
-                  trimCache(CACHE_DYNAMIC, 3);
+                  // commenting it out for the course
+                  // trimCache(CACHE_DYNAMIC, 3);
                   // - the difference between .add and .put is that the later
                   // requires you to provide the key as well
                   // - also notice that we need to clone the response,

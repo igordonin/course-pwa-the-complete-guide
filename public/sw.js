@@ -1,6 +1,16 @@
-var CACHE_STATIC = 'static-v15';
+importScripts('/src/js/idb.js');
+
+var CACHE_STATIC = 'static-v5';
 var CACHE_DYNAMIC = 'dynamic';
-var API_URL = 'https://httpbin.org/get';
+var API_URL = 'https://pwa-course-90792-default-rtdb.firebaseio.com/posts.json';
+
+var dbPromise = idb.open('posts-store', 1, function (instance) {
+  if (!instance.objectStoreNames.contains('posts')) {
+    instance.createObjectStore('posts', { keyPath: 'id' });
+  }
+});
+
+console.log('birl', dbPromise);
 
 function trimCache(name, maxItems) {
   caches.open(name).then(function (cache) {
@@ -39,6 +49,7 @@ self.addEventListener('install', function (event) {
           '/offline.html',
           '/src/js/app.js',
           '/src/js/feed.js',
+          '/src/js/idb.js',
           '/src/js/material.min.js',
           '/src/css/app.css',
           '/src/css/feed.css',
@@ -84,14 +95,20 @@ self.addEventListener('fetch', function (event) {
     // in the App, which fires a request to fetch data in parallel
     // from both the Cache and the Network
     event.respondWith(
-      caches.open(CACHE_DYNAMIC).then(function (cache) {
-        return fetch(event.request).then(function (response) {
-          // 3 might be a bit aggressive. you could have more items
-          // commenting it out for the course
-          // trimCache(CACHE_DYNAMIC, 3);
-          cache.put(event.request, response.clone());
-          return response;
+      fetch(event.request).then(function (response) {
+        const clonedResponse = response.clone();
+        clonedResponse.json().then(function (data) {
+          Object.values(data).forEach((card) => {
+            dbPromise.then(function (db) {
+              var tx = db.transaction('posts', 'readwrite');
+              var store = tx.objectStore('posts');
+              store.put(card);
+              return tx.complete;
+            });
+          });
         });
+
+        return response;
       })
     );
   } else {

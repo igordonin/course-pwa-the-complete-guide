@@ -1,4 +1,4 @@
-var API_URL = 'https://httpbin.org/get';
+var API_URL = 'https://pwa-course-90792-default-rtdb.firebaseio.com/posts.json';
 
 var shareImageButton = document.querySelector('#share-image-button');
 var createPostArea = document.querySelector('#create-post');
@@ -40,22 +40,22 @@ function clearCards() {
   }
 }
 
-function createCard() {
+function createCard(card) {
   var cardWrapper = document.createElement('div');
   cardWrapper.className = 'shared-moment-card mdl-card mdl-shadow--2dp';
   var cardTitle = document.createElement('div');
   cardTitle.className = 'mdl-card__title';
-  cardTitle.style.backgroundImage = 'url("/src/images/sf-boat.jpg")';
+  cardTitle.style.backgroundImage = `url("${card.image}")`;
   cardTitle.style.backgroundSize = 'cover';
   cardTitle.style.height = '180px';
   cardWrapper.appendChild(cardTitle);
   var cardTitleTextElement = document.createElement('h2');
   cardTitleTextElement.className = 'mdl-card__title-text';
-  cardTitleTextElement.textContent = 'San Francisco Trip';
+  cardTitleTextElement.textContent = card.title;
   cardTitle.appendChild(cardTitleTextElement);
   var cardSupportingText = document.createElement('div');
   cardSupportingText.className = 'mdl-card__supporting-text';
-  cardSupportingText.textContent = 'In San Francisco';
+  cardSupportingText.textContent = card.location;
   cardSupportingText.style.textAlign = 'center';
   // this is a feature that would allow the user to save content
   // for access while in offline mode on demand: cache on demand
@@ -76,6 +76,12 @@ function createCard() {
   sharedMomentsArea.appendChild(cardWrapper);
 }
 
+function updateUi(data) {
+  data.forEach((card) => {
+    createCard(card);
+  });
+}
+
 // This is a strategy to prevent Network data (preferred) from
 // being overriden by Cache data, as they're in race condition
 // with this implementation
@@ -91,7 +97,7 @@ fetch(API_URL)
     console.log('From Web', data);
     networkReceived = true;
     clearCards();
-    createCard();
+    updateUi(Object.values(data));
   });
 
 if ('caches' in window) {
@@ -106,7 +112,7 @@ if ('caches' in window) {
       console.log('From Cache', data);
       if (!networkReceived) {
         clearCards();
-        createCard();
+        updateUi(Object.values(data));
       }
     });
 }

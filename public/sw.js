@@ -110,8 +110,12 @@ self.addEventListener('fetch', function (event) {
                   // there's a side effect here, bc this is a naive approach
                   // for every fetch request that fails, we're returning this
                   // html page.
-                  // we can and will fine tune this later
-                  return cache.match('/offline.html');
+                  // - okay, so this is the fine tuning proposed by
+                  // the instructor. it's still naive and very simple.
+                  // in a real world app, we'd use a regex or such
+                  if (event.request.url.indexOf('/help') > -1) {
+                    return cache.match('/offline.html');
+                  }
                 });
               })
           );

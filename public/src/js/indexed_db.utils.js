@@ -9,6 +9,7 @@ function writeData(storeName, data) {
     var tx = db.transaction(storeName, 'readwrite');
     var store = tx.objectStore(storeName);
     store.put(data);
+    // after very write operation, it's required to return tx.complete
     return tx.complete;
   });
 }
@@ -18,5 +19,14 @@ function readAllData(storeName) {
     var tx = db.transaction(storeName, 'readonly');
     var store = tx.objectStore(storeName);
     return store.getAll();
+  });
+}
+
+function clearAllData(storeName) {
+  return dbPromise.then(function (db) {
+    var tx = db.transaction(storeName, 'readwrite');
+    var store = tx.objectStore(storeName);
+    store.clear();
+    return tx.complete;
   });
 }

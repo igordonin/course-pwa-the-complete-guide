@@ -90,12 +90,15 @@ self.addEventListener('fetch', function (event) {
     event.respondWith(
       fetch(event.request).then(function (response) {
         const clonedResponse = response.clone();
-        clonedResponse.json().then(function (data) {
-          Object.values(data).forEach((card) => {
-            writeData('posts', card);
+        clearAllData('posts')
+          .then(() => {
+            return clonedResponse.json();
+          })
+          .then(function (data) {
+            Object.values(data).forEach((card) => {
+              writeData('posts', card);
+            });
           });
-        });
-
         return response;
       })
     );

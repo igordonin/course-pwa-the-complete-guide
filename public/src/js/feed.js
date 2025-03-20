@@ -115,6 +115,27 @@ if ('indexedDb' in window) {
 var titleInput = document.querySelector('#title');
 var locationInput = document.querySelector('#location');
 
+// Fallback sendData
+function sendData() {
+  fetch(API_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify({
+      id: new Date().toISOString(),
+      title: titleInput.value,
+      location: locationInput.value,
+      image:
+        'https://imagedelivery.net/0ObHXyjKhN5YJrtuYFSvjQ/i-018c7670-9018-4a7e-841d-c5b0c42bc531-Apple-Painting-Original-Artwork-Red-Apple-Decor-Fruit-Still-Life-Impasto-Farmhouse-Kitchen-Wall-Art-Small-Oil-Painting-Gift-6x6-by-LimArt4U-Felting-Painting/display',
+    }),
+  }).then(function (res) {
+    console.log('Sent data', res);
+    updateUi();
+  });
+}
+
 form.addEventListener('submit', function (event) {
   event.preventDefault();
 
@@ -150,5 +171,8 @@ form.addEventListener('submit', function (event) {
           console.log(error);
         });
     });
+  } else {
+    // use fallback here
+    sendData();
   }
 });

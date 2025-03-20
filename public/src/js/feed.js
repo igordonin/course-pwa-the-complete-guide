@@ -7,6 +7,8 @@ var closeCreatePostModalButton = document.querySelector(
 );
 var sharedMomentsArea = document.querySelector('#shared-moments');
 
+var form = document.querySelector('form');
+
 function openCreatePostModal() {
   createPostArea.style.display = 'block';
   if (deferredPrompt) {
@@ -109,3 +111,44 @@ if ('indexedDb' in window) {
     }
   });
 }
+
+var titleInput = document.querySelector('#title');
+var locationInput = document.querySelector('#location');
+
+form.addEventListener('submit', function (event) {
+  event.preventDefault();
+
+  if (titleInput.value.trim() === '' || locationInput.value.trim() === '') {
+    alert('Please enter valid data!');
+    return;
+  }
+
+  closeCreatePostModal();
+
+  if ('serviceWorker' in navigator && 'SyncManager' in window) {
+    // the reason we reach out to the service worker like this is because
+    // the event happens in the web page, so the service worker here does
+    // not have access to the that event.
+    navigator.serviceWorker.ready.then(function (sw) {
+      var post = {
+        id: new Date().toISOString(),
+        title: titleInput.value,
+        location: locationInput.value,
+      };
+
+      // so, first we write the data to the indexedDb
+      writeData('sync-posts', post)
+        .then(function () {
+          return sw.sync.register('sync-new-posts');
+        })
+        .then(function () {
+          var snackbarContainer = document.querySelector('#confirmation-toast');
+          var data = { message: 'Your post was saved for syncing!' };
+          snackbarContainer.MaterialSnackbar.showSnackbar(data);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    });
+  }
+});

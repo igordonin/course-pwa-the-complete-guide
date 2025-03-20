@@ -1,6 +1,15 @@
+function databaseExists(storeNames, query) {
+  return storeNames.some(function (name) {
+    return name === query;
+  });
+}
+
 var dbPromise = idb.open('posts-store', 1, function (instance) {
-  if (!instance.objectStoreNames.contains('posts')) {
+  if (!databaseExists(instance.objectStoreNames, 'posts')) {
     instance.createObjectStore('posts', { keyPath: 'id' });
+  }
+  if (!databaseExists(instance.storeNames, 'sync-posts')) {
+    instance.createObjectStore('sync-posts', { keyPath: 'id' });
   }
 });
 

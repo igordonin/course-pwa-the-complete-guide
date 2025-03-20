@@ -49,3 +49,11 @@ Great overview over Strategies - the Offline Cookbook: https://jakearchibald.com
 Advanced Caching Guide: https://afasterweb.com/2017/01/31/upgrading-your-service-worker-cache/
 
 Mozilla Strategy Cookbook: https://serviceworke.rs/strategy-cache-and-update_service-worker_doc.html
+
+IndexedDB Browser Support: http://caniuse.com/#feat=indexeddb
+
+IDB on Github: https://github.com/jakearchibald/idb
+
+IndexedDB explained on MDN: https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API
+
+Alternative to IDB: http://dexie.org/

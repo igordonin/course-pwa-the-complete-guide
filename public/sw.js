@@ -1,7 +1,7 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/indexed_db.utils.js');
 
-var CACHE_STATIC = 'static-v6';
+var CACHE_STATIC = 'static-v10';
 var CACHE_DYNAMIC = 'dynamic';
 var API_URL = 'https://pwa-course-90792-default-rtdb.firebaseio.com/posts.json';
 
@@ -147,6 +147,50 @@ self.addEventListener('fetch', function (event) {
               })
           );
         })
+    );
+  }
+});
+
+self.addEventListener('sync', function (event) {
+  console.log('[Service Worker] Background synching ....', event);
+  // filter the event by tag
+  // do not mix up the event tag with the store name
+  if (event.tag === 'sync-new-posts') {
+    console.log('[Service Worker] Syncing new Posts ....');
+    event.waitUntil(
+      readAllData('sync-posts').then(function (data) {
+        for (var dt of data) {
+          fetch(API_URL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+            },
+            body: JSON.stringify({
+              id: dt.id,
+              title: dt.title,
+              location: dt.location,
+              image:
+                'https://bavipower.com/cdn/shop/articles/7469e9c9652967f4c8591dc7ca0b3a54--viking-ship_1024x1024.jpg?v=1607843960',
+            }),
+          })
+            .then(function (res) {
+              console.log('Sent data', res);
+              if (res.ok) {
+                res.json().then(function (resData) {
+                  console.log(
+                    'Response received. Delete the sync-post',
+                    resData
+                  );
+                  deleteById('sync-posts', resData.id);
+                });
+              }
+            })
+            .catch(function (err) {
+              console.log('Error while sending data', err);
+            });
+        }
+      })
     );
   }
 });

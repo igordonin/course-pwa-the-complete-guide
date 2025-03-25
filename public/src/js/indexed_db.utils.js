@@ -1,16 +1,9 @@
-function databaseExists(storeNames, query) {
-  return storeNames.some(function (name) {
-    return name === query;
+var dbPromise = idb.open('posts-store', 4, function (instance) {
+  ['posts', 'sync-posts'].forEach((storeName) => {
+    if (!instance.objectStoreNames.contains(storeName)) {
+      instance.createObjectStore(storeName, { keyPath: 'id' });
+    }
   });
-}
-
-var dbPromise = idb.open('posts-store', 1, function (instance) {
-  if (!databaseExists(instance.objectStoreNames, 'posts')) {
-    instance.createObjectStore('posts', { keyPath: 'id' });
-  }
-  if (!databaseExists(instance.storeNames, 'sync-posts')) {
-    instance.createObjectStore('sync-posts', { keyPath: 'id' });
-  }
 });
 
 function writeData(storeName, data) {
@@ -40,7 +33,8 @@ function clearAllData(storeName) {
   });
 }
 
-function deleteData(storeName, id) {
+function deleteById(storeName, id) {
+  console.log('Trying to delete: ', id);
   return dbPromise
     .then(function (db) {
       var tx = db.transaction(storeName, 'readwrite');

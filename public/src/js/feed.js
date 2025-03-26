@@ -1,4 +1,5 @@
 var API_URL = 'https://pwa-course-90792-default-rtdb.firebaseio.com/posts.json';
+var FUNCTION_URL = 'https://storepostdata-gl7o3b2hjq-uc.a.run.app';
 
 var shareImageButton = document.querySelector('#share-image-button');
 var createPostArea = document.querySelector('#create-post');
@@ -117,7 +118,7 @@ var locationInput = document.querySelector('#location');
 
 // Fallback sendData
 function sendData() {
-  fetch(API_URL, {
+  fetch(FUNCTION_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

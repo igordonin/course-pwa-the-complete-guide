@@ -1,9 +1,10 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/indexed_db.utils.js');
 
-var CACHE_STATIC = 'static-v10';
+var CACHE_STATIC = 'static-v14';
 var CACHE_DYNAMIC = 'dynamic';
 var API_URL = 'https://pwa-course-90792-default-rtdb.firebaseio.com/posts.json';
+var FUNCTION_URL = 'https://storepostdata-gl7o3b2hjq-uc.a.run.app';
 
 function trimCache(name, maxItems) {
   caches.open(name).then(function (cache) {
@@ -160,7 +161,7 @@ self.addEventListener('sync', function (event) {
     event.waitUntil(
       readAllData('sync-posts').then(function (data) {
         for (var dt of data) {
-          fetch(API_URL, {
+          fetch(FUNCTION_URL, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -182,6 +183,7 @@ self.addEventListener('sync', function (event) {
                     'Response received. Delete the sync-post',
                     resData
                   );
+                  // delete from indexedDB
                   deleteById('sync-posts', resData.id);
                 });
               }
